@@ -1,0 +1,195 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ServiceNow Knowledge Management REST API",
+    "description": "ServiceNow Knowledge Management REST API (sn_km_api)",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://dev206621.service-now.com",
+      "description": "ServiceNow Instance"
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "KnowledgeArticle": {
+        "type": "object",
+        "properties": {
+          "sys_id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "short_description": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "workflow_state": {
+            "type": "string"
+          },
+          "kb_knowledge_base": {
+            "type": "string"
+          },
+          "sys_view_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "KnowledgeResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeArticle"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/sn_km_api/knowledge/articles": {
+      "get": {
+        "summary": "Search Articles",
+        "description": "Search articles with query string",
+        "operationId": "searchKnowledgeArticles",
+        "parameters": [
+          {
+            "name": "sysparm_limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sysparm_offset",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sysparm_query",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sn_km_api/knowledge/articles/featured": {
+      "get": {
+        "summary": "Featured Articles",
+        "description": "Get featured knowledge articles",
+        "operationId": "getFeaturedArticles",
+        "parameters": [
+          {
+            "name": "sysparm_limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sn_km_api/knowledge/articles/mostviewed": {
+      "get": {
+        "summary": "Most Viewed Articles",
+        "description": "Get most viewed knowledge articles",
+        "operationId": "getMostViewedArticles",
+        "parameters": [
+          {
+            "name": "sysparm_limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sn_km_api/knowledge/articles/{sys_id}": {
+      "get": {
+        "summary": "Get Article",
+        "description": "Get a specific knowledge article by sys_id",
+        "operationId": "getKnowledgeArticle",
+        "parameters": [
+          {
+            "name": "sys_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeArticle"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
