@@ -106,7 +106,7 @@ agentic_solutions/
 ├── create_final_servicenow_specs.py     # OpenAPI spec generator
 ├── cleanup_junk.py                      # Cleanup utility
 ├── openapi_specs/                       # Generated OpenAPI specifications
-├── .pids/                              # Process ID files
+├── .servicenow_pids/                   # Process ID files
 └── .env                                # ServiceNow credentials (not in repo)
 ```
 
