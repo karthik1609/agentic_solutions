@@ -15,10 +15,19 @@ from fastmcp import FastMCP
 def main():
     load_dotenv(find_dotenv())
     
+    # Validate required environment variables
+    required_vars = ['SERVICENOW_INSTANCE_URL', 'SERVICENOW_USERNAME', 'SERVICENOW_PASSWORD']
+    missing_vars = [var for var in required_vars if not os.getenv(var)]
+    if missing_vars:
+        print(f"❌ Missing required environment variables: {', '.join(missing_vars)}")
+        print("💡 Please check your .env file and ensure all ServiceNow credentials are set.")
+        return 1
+    
     SN_INSTANCE = os.environ['SERVICENOW_INSTANCE_URL'].rstrip('/')
     SN_USER = os.environ['SERVICENOW_USERNAME']
     SN_PASS = os.environ['SERVICENOW_PASSWORD']
     VERIFY_SSL = os.getenv('SERVICENOW_VERIFY_SSL', 'true').lower() not in ('false', '0', 'no')
+    PORT = int(os.getenv('SERVICENOW_KNOWLEDGE_API_PORT', '3002'))
     
     spec_path = pathlib.Path('openapi_specs/servicenow_knowledge_api_final.json')
     if not spec_path.exists():
@@ -44,12 +53,13 @@ def main():
             )
 
             print("🚀 Starting ServiceNow Knowledge Management API MCP Server (HTTP)")
-            print(f"📡 Port: 3002")
+            print(f"📡 Port: {PORT}")
             print(f"🔗 ServiceNow Instance: {SN_INSTANCE}")
+            print(f"🔒 SSL Verification: {'Enabled' if VERIFY_SSL else 'Disabled'}")
             print("✅ Ready for HTTP requests")
 
             # FastMCP HTTP transport for Magentic-UI integration
-            mcp.run(transport="http", host="localhost", port=3002)
+            mcp.run(transport="http", host="localhost", port=PORT)
 
     asyncio.run(run_server())
 

@@ -67,3 +67,18 @@ def test_server_startup_scripts_exist():
         script_path = Path(script)
         assert script_path.exists(), f"{script} should exist"
         assert script_path.is_file(), f"{script} should be a file"
+
+
+def test_health_check_function():
+    """Test that health check function is properly implemented."""
+    # Import the health check function
+    import sys
+    sys.path.append('.')
+    
+    # This should not raise an error
+    try:
+        from start_servicenow_http_system import check_health
+        # Function should exist and be callable
+        assert callable(check_health), "check_health should be callable"
+    except ImportError as e:
+        pytest.fail(f"Could not import check_health function: {e}")

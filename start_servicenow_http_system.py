@@ -9,6 +9,7 @@ import os
 import time
 import pathlib
 import requests
+from dotenv import load_dotenv, find_dotenv
 
 PID_DIR = pathlib.Path(".servicenow_pids")
 TABLE_SERVER_PID_FILE = PID_DIR / "table_server.pid"
@@ -68,7 +69,7 @@ def stop_service(name, pid_file, process_name_grep):
         pid_file.unlink()
 
 
-def start_service(name, cmd, pid_file):
+def start_service(name, cmd, pid_file, env=None):
     print(f"📊 Starting {name}...")
     try:
         process = subprocess.Popen(
@@ -76,6 +77,7 @@ def start_service(name, cmd, pid_file):
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             preexec_fn=os.setsid,
+            env=env,
         )
         pid_file.write_text(str(process.pid))
         print(f"✅ {name} started successfully (PID: {process.pid})")
@@ -86,16 +88,42 @@ def start_service(name, cmd, pid_file):
 
 
 def check_health(url):
+    """Check if MCP HTTP endpoint is responding properly."""
     try:
-        response = requests.get(url, timeout=5)
-        return response.status_code == 200
+        # Test with a simple MCP initialize request
+        payload = {
+            "jsonrpc": "2.0",
+            "id": "health-check",
+            "method": "initialize",
+            "params": {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {"tools": {}},
+                "clientInfo": {"name": "HealthCheck", "version": "1.0.0"}
+            }
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json, text/event-stream"
+        }
+        response = requests.post(url, json=payload, headers=headers, timeout=5)
+        # MCP server should respond with JSON-RPC, even if it's an error about session
+        return response.status_code in [200, 400] and response.headers.get('content-type', '').startswith('application/json')
     except requests.exceptions.RequestException:
         return False
 
 
 def main():
+    # Load environment variables
+    load_dotenv(find_dotenv())
+    
+    # Get ports from environment with defaults
+    MAGENTIC_UI_PORT = os.getenv("MAGENTIC_UI_PORT", "8090")
+    TABLE_API_PORT = os.getenv("SERVICENOW_TABLE_API_PORT", "3001")
+    KNOWLEDGE_API_PORT = os.getenv("SERVICENOW_KNOWLEDGE_API_PORT", "3002")
+    
     print("🚀 ServiceNow MCP System - HTTP Transport Startup")
     print("=" * 55)
+    print(f"📡 Ports: Magentic-UI={MAGENTIC_UI_PORT}, Table={TABLE_API_PORT}, Knowledge={KNOWLEDGE_API_PORT}")
 
     # Ensure PID directory exists
     PID_DIR.mkdir(exist_ok=True)
@@ -129,15 +157,23 @@ def main():
     )
 
     # Start HTTP MCP servers as separate processes
+    table_env = os.environ.copy()
+    table_env["SERVICENOW_TABLE_API_PORT"] = TABLE_API_PORT
+    
+    knowledge_env = os.environ.copy()
+    knowledge_env["SERVICENOW_KNOWLEDGE_API_PORT"] = KNOWLEDGE_API_PORT
+    
     table_pid = start_service(
         "ServiceNow Table API Server",
         [".venv/bin/python", "servicenow_table_http_server.py"],
         TABLE_SERVER_PID_FILE,
+        env=table_env,
     )
     knowledge_pid = start_service(
         "ServiceNow Knowledge API Server",
         [".venv/bin/python", "servicenow_knowledge_http_server.py"],
         KNOWLEDGE_SERVER_PID_FILE,
+        env=knowledge_env,
     )
 
     print("⏳ Waiting for MCP servers to initialize...")
@@ -150,7 +186,7 @@ def main():
             "--host",
             "localhost",
             "--port",
-            "8090",
+            MAGENTIC_UI_PORT,
             "--config",
             "servicenow_final_config.yaml",
         ],
@@ -165,18 +201,18 @@ def main():
     magentic_ui_running = is_process_running(magentic_ui_pid)
 
     print(
-        f"✅ Table API Server: {'Running' if table_running else 'Stopped'} (PID: {table_pid}) - http://localhost:3001"
+        f"✅ Table API Server: {'Running' if table_running else 'Stopped'} (PID: {table_pid}) - http://localhost:{TABLE_API_PORT}"
     )
     print(
-        f"✅ Knowledge API Server: {'Running' if knowledge_running else 'Stopped'} (PID: {knowledge_pid}) - http://localhost:3002"
+        f"✅ Knowledge API Server: {'Running' if knowledge_running else 'Stopped'} (PID: {knowledge_pid}) - http://localhost:{KNOWLEDGE_API_PORT}"
     )
     print(
-        f"✅ Magentic-UI: {'Running' if magentic_ui_running else 'Stopped'} (PID: {magentic_ui_pid}) - http://localhost:8090"
+        f"✅ Magentic-UI: {'Running' if magentic_ui_running else 'Stopped'} (PID: {magentic_ui_pid}) - http://localhost:{MAGENTIC_UI_PORT}"
     )
 
     if table_running and knowledge_running and magentic_ui_running:
         print("\n🎉 All services started successfully!")
-        print("\n🌐 Access your system at: http://localhost:8090")
+        print(f"\n🌐 Access your system at: http://localhost:{MAGENTIC_UI_PORT}")
         print("\n📋 Available agents:")
         print("   • servicenow_table_agent (Table API)")
         print("   • servicenow_knowledge_agent (Knowledge Management)")
