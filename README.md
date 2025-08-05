@@ -43,6 +43,7 @@ A comprehensive integration system that connects ServiceNow REST APIs with Magen
    SERVICENOW_INSTANCE_URL=https://your-instance.service-now.com
    SERVICENOW_USERNAME=your_username
    SERVICENOW_PASSWORD=your_password
+   SERVICENOW_VERIFY_SSL=true  # set to 'false' to disable SSL verification
    ```
 
 ## 🎯 Quick Start
@@ -146,9 +147,8 @@ agentic_solutions/
 - Full sn_km_api namespace support
 
 ## 🛡️ Security
-
 - Credentials stored in `.env` file (excluded from Git)
-- HTTPS verification disabled for development (configurable)
+- SSL verification enabled by default (set `SERVICENOW_VERIFY_SSL=false` for development)
 - Authentication via ServiceNow username/password
 - Local-only MCP server endpoints
 
