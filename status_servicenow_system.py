@@ -1,17 +1,36 @@
 #!/usr/bin/env python3
-"""
-ServiceNow MCP System - Status Checker
-Check the status of all running services
+"""ServiceNow MCP System - Status Checker
+
+Check the status of all running services. Health check URLs can be
+customised via CLI flags or environment variables. The script also
+supports both HTTP and SSE transports for the MCP servers.
 """
 
+import argparse
 import os
 import subprocess
 import requests
 import time
 from pathlib import Path
 
-# PID file locations
-PID_DIR = Path(".servicenow_pids")
+
+def _find_pid_dir() -> Path:
+    """Determine which PID directory is in use.
+
+    The HTTP startup script uses ``.pids`` while the SSE script uses
+    ``.servicenow_pids``. Whichever exists takes precedence; otherwise the
+    SSE directory is returned as a default.
+    """
+
+    candidates = [Path(".servicenow_pids"), Path(".pids")]
+    for cand in candidates:
+        if cand.exists():
+            return cand
+    return candidates[0]
+
+
+# PID file locations (determined at runtime)
+PID_DIR = _find_pid_dir()
 TABLE_PID_FILE = PID_DIR / "table_server.pid"
 KNOWLEDGE_PID_FILE = PID_DIR / "knowledge_server.pid"
 MAGENTIC_PID_FILE = PID_DIR / "magentic_ui.pid"
@@ -91,36 +110,64 @@ def check_port_usage():
     
     return port_info
 
+
+def _determine_transport(cli_choice: str | None) -> str:
+    """Determine which transport to use for health checks."""
+
+    if cli_choice:
+        return cli_choice
+
+    env_transport = os.getenv("SERVICENOW_TRANSPORT", "").lower()
+    if env_transport in {"http", "sse"}:
+        return env_transport
+
+    # Default: choose based on which PID directory is active
+    return "http" if PID_DIR.name == ".pids" else "sse"
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Service status checker")
+    parser.add_argument("--transport", choices=["http", "sse"], help="Transport used by MCP servers")
+    parser.add_argument("--table-url", help="Override Table API health check URL")
+    parser.add_argument("--knowledge-url", help="Override Knowledge API health check URL")
+    parser.add_argument("--magentic-url", help="Override Magentic-UI health check URL")
+    args = parser.parse_args()
+
+    transport = _determine_transport(args.transport)
+    path = "/mcp/" if transport == "http" else "/sse"
+
+    # Service definitions with configurable URLs
+    table_url = args.table_url or os.getenv("TABLE_HEALTH_URL") or f"http://localhost:3001{path}"
+    knowledge_url = args.knowledge_url or os.getenv("KNOWLEDGE_HEALTH_URL") or f"http://localhost:3002{path}"
+    magentic_url = args.magentic_url or os.getenv("MAGENTIC_UI_HEALTH_URL") or "http://localhost:8090/api/health"
+
+    services = [
+        {
+            "name": "ServiceNow Table API Server",
+            "pid_file": TABLE_PID_FILE,
+            "url": table_url,
+            "port": 3001,
+        },
+        {
+            "name": "ServiceNow Knowledge API Server",
+            "pid_file": KNOWLEDGE_PID_FILE,
+            "url": knowledge_url,
+            "port": 3002,
+        },
+        {
+            "name": "Magentic-UI",
+            "pid_file": MAGENTIC_PID_FILE,
+            "url": magentic_url,
+            "port": 8090,
+        },
+    ]
+
     print("📊 ServiceNow MCP System - Status Check")
     print("=" * 50)
-    
-    # Check if PID directory exists
+
     if not PID_DIR.exists():
         print("⚠️  PID directory not found. Services may not be running via daemon.")
         print("🔍 Checking for processes anyway...\n")
-    
-    # Service definitions
-    services = [
-        {
-            'name': 'ServiceNow Table API Server',
-            'pid_file': TABLE_PID_FILE,
-            'url': 'http://localhost:3001/sse',
-            'port': 3001
-        },
-        {
-            'name': 'ServiceNow Knowledge API Server', 
-            'pid_file': KNOWLEDGE_PID_FILE,
-            'url': 'http://localhost:3002/sse',
-            'port': 3002
-        },
-        {
-            'name': 'Magentic-UI',
-            'pid_file': MAGENTIC_PID_FILE,
-            'url': 'http://localhost:8090/api/health',
-            'port': 8090
-        }
-    ]
     
     # Check port usage
     port_info = check_port_usage()
