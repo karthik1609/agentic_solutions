@@ -25,6 +25,10 @@ def main():
         raise FileNotFoundError(f"OpenAPI spec not found: {spec_path}")
     
     spec = json.loads(spec_path.read_text())
+    
+    # Update server URL in OpenAPI spec to match current instance
+    if 'servers' in spec and len(spec['servers']) > 0:
+        spec['servers'][0]['url'] = SN_INSTANCE
 
     async def run_server():
         async with httpx.AsyncClient(
@@ -36,7 +40,7 @@ def main():
             mcp = FastMCP.from_openapi(
                 openapi_spec=spec,
                 client=client,
-                name='ServiceNow Knowledge Management API'
+                name='ServiceNow_Knowledge_API'  # Use underscores for consistency
             )
 
             print("🚀 Starting ServiceNow Knowledge Management API MCP Server (HTTP)")

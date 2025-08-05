@@ -19,6 +19,7 @@ def main():
     SN_INSTANCE = os.environ['SERVICENOW_INSTANCE_URL'].rstrip('/')
     SN_USER = os.environ['SERVICENOW_USERNAME']
     SN_PASS = os.environ['SERVICENOW_PASSWORD']
+    VERIFY_SSL = os.getenv('SERVICENOW_VERIFY_SSL', 'true').lower() not in ('false', '0', 'no')
     
     # Load OpenAPI spec
     spec_path = pathlib.Path('openapi_specs/servicenow_table_api_final.json')
@@ -27,23 +28,33 @@ def main():
     
     spec = json.loads(spec_path.read_text())
     
-    # Create HTTP client with ServiceNow authentication
-    client = httpx.AsyncClient(
-        base_url=SN_INSTANCE,
-        auth=(SN_USER, SN_PASS),
-        verify=False,
-        timeout=30.0
-    )
+    # Update server URL in OpenAPI spec to match current instance
+    if 'servers' in spec and len(spec['servers']) > 0:
+        spec['servers'][0]['url'] = SN_INSTANCE
     
-    # Create FastMCP server from OpenAPI spec
-    mcp = FastMCP.from_openapi(
-        openapi_spec=spec,
-        client=client,
-        name='ServiceNow Table API'
-    )
+    async def run_server():
+        async with httpx.AsyncClient(
+            base_url=SN_INSTANCE,
+            auth=(SN_USER, SN_PASS),
+            verify=VERIFY_SSL,
+            timeout=30.0
+        ) as client:
+            # Create FastMCP server from OpenAPI spec
+            mcp = FastMCP.from_openapi(
+                openapi_spec=spec,
+                client=client,
+                name='ServiceNow_Table_API'  # Use underscores for consistency
+            )
+            
+            print("🚀 Starting ServiceNow Table API MCP Server (SSE)")
+            print(f"📡 Port: 3001")
+            print(f"🔗 ServiceNow Instance: {SN_INSTANCE}")
+            print("✅ Ready for SSE requests")
+            
+            # FastMCP handles SSE internally with run() method
+            mcp.run(transport="sse", host="localhost", port=3001)
     
-    # FastMCP handles SSE internally with run() method
-    mcp.run(transport="sse", host="localhost", port=3001)
+    asyncio.run(run_server())
 
 if __name__ == "__main__":
     main()

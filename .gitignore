@@ -108,11 +108,12 @@ servicenow_credentials.json
 *.pem
 *.crt
 
-# Test files and temporary scripts
+# Test files and temporary scripts (exclude proper tests/ directory)
 test_*.py
 *_test.py
 debug_*.py
 temp_*.py
+!tests/test_*.py
 
 # Reference docs (might be copyrighted)
 reference_docs/

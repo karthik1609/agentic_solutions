@@ -7,8 +7,14 @@
   },
   "servers": [
     {
-      "url": "https://dev206621.service-now.com",
-      "description": "ServiceNow Instance"
+      "url": "{server_url}",
+      "description": "ServiceNow Instance",
+      "variables": {
+        "server_url": {
+          "default": "https://your-instance.service-now.com",
+          "description": "ServiceNow instance URL"
+        }
+      }
     }
   ],
   "security": [

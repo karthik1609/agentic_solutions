@@ -25,6 +25,13 @@ dependencies = [
     "pathlib2>=2.3.7",
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-mock>=3.10.0",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
