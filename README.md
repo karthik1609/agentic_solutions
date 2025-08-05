@@ -47,17 +47,24 @@ A comprehensive integration system that connects ServiceNow REST APIs with Magen
 
 ## 🎯 Quick Start
 
-### Start the Complete System
+### Start with HTTP Transport (default)
 
 ```bash
-# Start all services (MCP servers + Magentic-UI)
+# Start all services (MCP servers + Magentic-UI) using HTTP
 uv run python start_servicenow_http_system.py
 ```
 
 This will:
 - Start ServiceNow Table API MCP server on port 3001
-- Start ServiceNow Knowledge Management API MCP server on port 3002  
+- Start ServiceNow Knowledge Management API MCP server on port 3002
 - Launch Magentic-UI on port 8090 with ServiceNow agents configured
+
+### Start with SSE Transport
+
+```bash
+# Start all services using SSE transport
+uv run python start_servicenow_sse_system.py
+```
 
 ### Access the System
 
@@ -81,7 +88,18 @@ uv run python stop_servicenow_system.py
 ### Check System Status
 
 ```bash
-# View status of all components
+# HTTP mode (default after start_servicenow_http_system.py)
+uv run python status_servicenow_system.py
+
+# SSE mode
+uv run python status_servicenow_system.py --transport sse
+```
+
+You can also override specific health-check endpoints:
+
+```bash
+TABLE_HEALTH_URL=http://localhost:3001/mcp/ \
+KNOWLEDGE_HEALTH_URL=http://localhost:3002/mcp/ \
 uv run python status_servicenow_system.py
 ```
 
