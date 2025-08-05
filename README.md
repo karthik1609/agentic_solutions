@@ -43,21 +43,29 @@ A comprehensive integration system that connects ServiceNow REST APIs with Magen
    SERVICENOW_INSTANCE_URL=https://your-instance.service-now.com
    SERVICENOW_USERNAME=your_username
    SERVICENOW_PASSWORD=your_password
+   SERVICENOW_VERIFY_SSL=true  # set to 'false' to disable SSL verification
    ```
 
 ## 🎯 Quick Start
 
-### Start the Complete System
+### Start with HTTP Transport (default)
 
 ```bash
-# Start all services (MCP servers + Magentic-UI)
+# Start all services (MCP servers + Magentic-UI) using HTTP
 uv run python start_servicenow_http_system.py
 ```
 
 This will:
 - Start ServiceNow Table API MCP server on port 3001
-- Start ServiceNow Knowledge Management API MCP server on port 3002  
+- Start ServiceNow Knowledge Management API MCP server on port 3002
 - Launch Magentic-UI on port 8090 with ServiceNow agents configured
+
+### Start with SSE Transport
+
+```bash
+# Start all services using SSE transport
+uv run python start_servicenow_sse_system.py
+```
 
 ### Access the System
 
@@ -81,7 +89,18 @@ uv run python stop_servicenow_system.py
 ### Check System Status
 
 ```bash
-# View status of all components
+# HTTP mode (default after start_servicenow_http_system.py)
+uv run python status_servicenow_system.py
+
+# SSE mode
+uv run python status_servicenow_system.py --transport sse
+```
+
+You can also override specific health-check endpoints:
+
+```bash
+TABLE_HEALTH_URL=http://localhost:3001/mcp/ \
+KNOWLEDGE_HEALTH_URL=http://localhost:3002/mcp/ \
 uv run python status_servicenow_system.py
 ```
 
@@ -106,7 +125,7 @@ agentic_solutions/
 ├── create_final_servicenow_specs.py     # OpenAPI spec generator
 ├── cleanup_junk.py                      # Cleanup utility
 ├── openapi_specs/                       # Generated OpenAPI specifications
-├── .pids/                              # Process ID files
+├── .servicenow_pids/                   # Process ID files
 └── .env                                # ServiceNow credentials (not in repo)
 ```
 
@@ -128,9 +147,8 @@ agentic_solutions/
 - Full sn_km_api namespace support
 
 ## 🛡️ Security
-
 - Credentials stored in `.env` file (excluded from Git)
-- HTTPS verification disabled for development (configurable)
+- SSL verification enabled by default (set `SERVICENOW_VERIFY_SSL=false` for development)
 - Authentication via ServiceNow username/password
 - Local-only MCP server endpoints
 

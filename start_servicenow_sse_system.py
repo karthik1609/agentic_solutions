@@ -65,16 +65,20 @@ def main():
     try:
         # Start ServiceNow Table API SSE server
         print("📊 Starting ServiceNow Table API SSE server on port 3001...")
-        table_proc = subprocess.Popen([
-            "uv", "run", "python", "servicenow_table_sse_server.py"
-        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        table_log = "table_sse_server.log"
+        with open(table_log, "w") as log_file:
+            table_proc = subprocess.Popen([
+                "uv", "run", "python", "servicenow_table_sse_server.py"
+            ], stdout=log_file, stderr=subprocess.STDOUT)
         processes.append(table_proc)
-        
-        # Start ServiceNow Knowledge API SSE server  
+
+        # Start ServiceNow Knowledge API SSE server
         print("📚 Starting ServiceNow Knowledge API SSE server on port 3002...")
-        knowledge_proc = subprocess.Popen([
-            "uv", "run", "python", "servicenow_knowledge_sse_server.py"
-        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        knowledge_log = "knowledge_sse_server.log"
+        with open(knowledge_log, "w") as log_file:
+            knowledge_proc = subprocess.Popen([
+                "uv", "run", "python", "servicenow_knowledge_sse_server.py"
+            ], stdout=log_file, stderr=subprocess.STDOUT)
         processes.append(knowledge_proc)
         
         # Wait for servers to start
@@ -84,14 +88,14 @@ def main():
         # Check if servers are running
         if table_proc.poll() is not None:
             print("❌ Table API server failed to start")
-            stdout, stderr = table_proc.communicate()
-            print(f"Error: {stderr.decode()}")
+            with open(table_log, "r", encoding="utf-8", errors="replace") as f:
+                print(f"Error:\n{f.read()}")
             return 1
-            
+
         if knowledge_proc.poll() is not None:
-            print("❌ Knowledge API server failed to start") 
-            stdout, stderr = knowledge_proc.communicate()
-            print(f"Error: {stderr.decode()}")
+            print("❌ Knowledge API server failed to start")
+            with open(knowledge_log, "r", encoding="utf-8", errors="replace") as f:
+                print(f"Error:\n{f.read()}")
             return 1
             
         print("✅ MCP servers started successfully")
