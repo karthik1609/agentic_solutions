@@ -117,3 +117,11 @@ temp_*.py
 # Reference docs (might be copyrighted)
 reference_docs/
 ServiceNow Developers_files/
+ServiceNow Developers.html
+ServiceNow Developers.pdf
+
+# Development files
+temp.ipynb
+*.ipynb
+SSE_ENDPOINT_ANALYSIS.md
+sse_viewer.html
