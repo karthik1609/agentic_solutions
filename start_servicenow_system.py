@@ -128,7 +128,7 @@ def start_mcp_server(script_name: str, server_name: str, pid_file: Path) -> bool
         write_pid_file(pid_file, process.pid)
         
         # Give it a moment to start
-        time.sleep(3)
+        time.sleep(30)
         
         # Check if it's still running
         if is_process_running(process.pid):
@@ -150,8 +150,8 @@ def start_magentic_ui() -> bool:
         # Start Magentic-UI in detached mode
         process = subprocess.Popen([
             ".venv/bin/magentic-ui",
-            "--host", "localhost",
-            "--port", "8090", 
+            # "--host", "localhost",
+            "--port", "8080", 
             "--config", "servicenow_final_config.yaml"
         ],
         stdout=subprocess.DEVNULL,
@@ -186,7 +186,7 @@ def check_services_status():
     services = [
         ("Table API Server", TABLE_PID_FILE, "http://localhost:3001/sse"),
         ("Knowledge API Server", KNOWLEDGE_PID_FILE, "http://localhost:3002/sse"),
-        ("Magentic-UI", MAGENTIC_PID_FILE, "http://localhost:8090")
+        ("Magentic-UI", MAGENTIC_PID_FILE, "http://localhost:8080")
     ]
     
     all_running = True
@@ -244,7 +244,7 @@ def main():
     # Final status check
     if check_services_status():
         print("\n🎉 All services started successfully!")
-        print("\n🌐 Access your system at: http://localhost:8090")
+        print("\n🌐 Access your system at: http://localhost:8080")
         print("\n📋 Available agents:")
         print("   • servicenow_table_agent (Table API)")
         print("   • servicenow_knowledge_agent (Knowledge Management)")

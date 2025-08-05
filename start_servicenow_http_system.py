@@ -117,7 +117,7 @@ def main():
     load_dotenv(find_dotenv())
     
     # Get ports from environment with defaults
-    MAGENTIC_UI_PORT = os.getenv("MAGENTIC_UI_PORT", "8090")
+    MAGENTIC_UI_PORT = os.getenv("MAGENTIC_UI_PORT", "8080")
     TABLE_API_PORT = os.getenv("SERVICENOW_TABLE_API_PORT", "3001")
     KNOWLEDGE_API_PORT = os.getenv("SERVICENOW_KNOWLEDGE_API_PORT", "3002")
     
@@ -223,7 +223,12 @@ def main():
         print("💡 HTTP MCP servers running independently - more reliable!")
     else:
         print("\n⚠️  Some services failed to start. Check logs for details.")
-
+        if not table_running:
+            print("💡 Try: uv run python servicenow_table_http_server.py")
+        if not knowledge_running:
+            print("💡 Try: uv run python servicenow_knowledge_http_server.py")
+        if not magentic_ui_running:
+            print("💡 Try: uv run python magentic-ui --host localhost --port 8080 --config servicenow_final_config.yaml")
 
 if __name__ == "__main__":
     main()

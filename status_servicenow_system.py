@@ -91,7 +91,7 @@ def get_process_info(pid: int) -> dict:
 
 def check_port_usage():
     """Check which processes are using our ports"""
-    ports = [3001, 3002, 8090]
+    ports = [3001, 3002, 8080]
     port_info = {}
     
     for port in ports:
@@ -139,7 +139,7 @@ def main():
     # Service definitions with configurable URLs
     table_url = args.table_url or os.getenv("TABLE_HEALTH_URL") or f"http://localhost:3001{path}"
     knowledge_url = args.knowledge_url or os.getenv("KNOWLEDGE_HEALTH_URL") or f"http://localhost:3002{path}"
-    magentic_url = args.magentic_url or os.getenv("MAGENTIC_UI_HEALTH_URL") or "http://localhost:8090/api/health"
+    magentic_url = args.magentic_url or os.getenv("MAGENTIC_UI_HEALTH_URL") or "http://localhost:8080/api/health"
 
     services = [
         {
@@ -158,7 +158,7 @@ def main():
             "name": "Magentic-UI",
             "pid_file": MAGENTIC_PID_FILE,
             "url": magentic_url,
-            "port": 8090,
+            "port": 8080,
         },
     ]
 
@@ -223,7 +223,7 @@ def main():
     print("=" * 50)
     if all_healthy:
         print("🎉 System Status: All services are healthy!")
-        print("🌐 Access your system at: http://localhost:8090")
+        print("🌐 Access your system at: http://localhost:8080")
     else:
         print("⚠️  System Status: Some issues detected")
         print("💡 Try: python stop_servicenow_system.py && python start_servicenow_system.py")

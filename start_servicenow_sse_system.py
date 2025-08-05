@@ -105,12 +105,12 @@ def main():
         magentic_proc = subprocess.Popen([
             ".venv/bin/magentic-ui", 
             "--host", "localhost", 
-            "--port", "8090",
+            "--port", "8080",
             "--config", "servicenow_final_config.yaml"
         ])
         processes.append(magentic_proc)
         
-        print("🌐 System started! Access at: http://localhost:8090")
+        print("🌐 System started! Access at: http://localhost:8080")
         print("📋 Available agents:")
         print("   • servicenow_table_agent (Table API)")
         print("   • servicenow_knowledge_agent (Knowledge Management)")

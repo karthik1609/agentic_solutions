@@ -85,7 +85,7 @@ def kill_by_process_name():
         print("✅ Killed remaining Magentic-UI processes")
     
     # Kill any remaining processes on our ports
-    for port in [3001, 3002, 8090]:
+    for port in [3001, 3002, 8080]:
         result = subprocess.run([
             "lsof", "-ti", f":{port}"
         ], capture_output=True, text=True)

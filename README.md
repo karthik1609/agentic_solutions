@@ -58,7 +58,7 @@ uv run python start_servicenow_http_system.py
 This will:
 - Start ServiceNow Table API MCP server on port 3001
 - Start ServiceNow Knowledge Management API MCP server on port 3002
-- Launch Magentic-UI on port 8090 with ServiceNow agents configured
+- Launch Magentic-UI on port 8080 with ServiceNow agents configured
 
 ### Start with SSE Transport
 
@@ -69,7 +69,7 @@ uv run python start_servicenow_sse_system.py
 
 ### Access the System
 
-Open your browser and navigate to: **http://localhost:8090**
+Open your browser and navigate to: **http://localhost:8080**
 
 ### Available Agents
 
@@ -192,7 +192,7 @@ uv run python cleanup_junk.py
 
 ### Common Issues
 
-1. **Port conflicts**: Ensure ports 3001, 3002, and 8090 are available
+1. **Port conflicts**: Ensure ports 3001, 3002, and 8080 are available
 2. **Docker not running**: Start Docker Desktop before launching
 3. **ServiceNow credentials**: Verify `.env` file configuration
 4. **Agent not visible**: Try refreshing browser or starting new session
