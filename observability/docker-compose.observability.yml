@@ -68,8 +68,7 @@ services:
     image: grafana/tempo:latest
     ports:
       - "3200:3200"   # Tempo HTTP
-      - "4317:4317"   # OTLP gRPC (shared with otel-collector)
-      - "4318:4318"   # OTLP HTTP (shared with otel-collector)
+      # OTLP gRPC (4317) and HTTP (4318) not mapped to host to avoid conflicts with otel-collector
     volumes:
       - ./tempo.yaml:/etc/tempo.yaml:ro
       - tempo_data:/tmp/tempo
