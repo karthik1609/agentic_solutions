@@ -85,6 +85,10 @@ Grafana ships with sample dashboards – import or build your own.
 * **Prometheus UI** (<http://localhost:9090>) for raw queries.
 * In Grafana – _Explore → Prometheus_.
 
+> The Python services expose metrics on **port 8010** by default
+> (`PROMETHEUS_METRICS_PORT`). Ensure Prometheus and the OTel
+> Collector scrape configs target this port.
+
 Example PromQL snippets:
 ```promql
 # MCP request throughput (replace job label if needed)

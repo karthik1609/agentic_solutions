@@ -276,15 +276,22 @@ def configure_auto_instrumentation():
 def start_prometheus_server():
     """Start Prometheus metrics server for local scraping, using a free port if needed"""
     desired = os.getenv("PROMETHEUS_METRICS_PORT")
+    desired_port = None
+
     # Determine initial port
     if desired:
-        port = int(desired)
+        desired_port = int(desired)
         try:
-            start_http_server(port)
-            _logger.info("prometheus_server_started", port=port)
+            start_http_server(desired_port)
+            _logger.info("prometheus_server_started", port=desired_port)
             return
         except OSError as e:
-            _logger.warning("prometheus_server_start_failed", port=port, error=str(e))
+            _logger.error(
+                "prometheus_server_start_failed",
+                port=desired_port,
+                error=str(e),
+            )
+
     # Fallback: find a free OS-assigned port
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(("", 0))
@@ -292,7 +299,11 @@ def start_prometheus_server():
     sock.close()
     try:
         start_http_server(free_port)
-        _logger.info("prometheus_server_started", port=free_port, fallback=True)
+        _logger.warning(
+            "prometheus_server_started_on_random_port",
+            port=free_port,
+            desired_port=desired_port,
+        )
     except OSError as e:
         _logger.error("prometheus_server_fallback_failed", port=free_port, error=str(e))
 
