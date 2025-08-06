@@ -1,0 +1,125 @@
+# OpenTelemetry Collector Configuration
+# Central telemetry pipeline for ServiceNow MCP System
+
+receivers:
+  # OTLP receivers for traces, metrics, and logs
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+        cors:
+          allowed_origins:
+            - "http://localhost:*"
+            - "http://127.0.0.1:*"
+
+  # Prometheus scraper for local metrics
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'servicenow-mcp-services'
+          scrape_interval: 15s
+          static_configs:
+            - targets:
+                - 'host.docker.internal:8000'  # Prometheus metrics from Python services
+                - 'host.docker.internal:3001'  # Table API server
+                - 'host.docker.internal:3002'  # Knowledge API server
+                - 'host.docker.internal:8080'  # Magentic-UI
+          metrics_path: /metrics
+          
+        - job_name: 'otel-collector'
+          scrape_interval: 30s
+          static_configs:
+            - targets: ['localhost:8888']
+
+processors:
+  # Batch processor for efficiency
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+    send_batch_max_size: 2048
+
+  # Resource processor to add common attributes
+  resource:
+    attributes:
+      - key: service.namespace
+        value: "servicenow-mcp"
+        action: upsert
+      - key: deployment.environment
+        from_attribute: environment
+        action: upsert
+
+  # Memory limiter to prevent OOM
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+  # Probabilistic sampler for high-volume environments
+  probabilistic_sampler:
+    sampling_percentage: 100  # 100% in development, lower in production
+
+exporters:
+  # Loki for logs
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+
+  # Tempo for traces  
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+
+  # Mimir for metrics
+  prometheusremotewrite/mimir:
+    endpoint: http://mimir:9009/api/v1/push
+    external_labels:
+      cluster: "servicenow-mcp-local"
+      replica: "collector-1"
+
+  # Debug exporter for troubleshooting
+  debug:
+    verbosity: basic
+    sampling_initial: 2
+    sampling_thereafter: 500
+
+  # Prometheus exporter for direct metrics access
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: "servicenow_mcp"
+    const_labels:
+      cluster: "local"
+
+# Health check and monitoring extensions configuration
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+  pprof:
+    endpoint: 0.0.0.0:1777
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [health_check, pprof, zpages]
+  
+  pipelines:
+    # Traces pipeline
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch, probabilistic_sampler]
+      exporters: [otlp/tempo, debug]
+
+    # Metrics pipeline  
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [memory_limiter, resource, batch]
+      exporters: [prometheusremotewrite/mimir, prometheus, debug]
+
+    # Logs pipeline
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [loki, debug]
+
+# Note: Collector self-telemetry configuration removed for compatibility

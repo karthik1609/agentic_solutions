@@ -1,36 +1,82 @@
 [project]
 name = "servicenow-mcp-system"
 version = "1.0.0"
-description = "ServiceNow MCP integration with Magentic-UI using SSE transport"
-requires-python = ">=3.11"
-dependencies = [
-    # Core MCP and UI
-    "fastmcp>=2.11.0",
-    "magentic-ui>=0.1.2",
-    "mcp[cli]>=1.12.3",
-    
-    # HTTP and async
-    "httpx>=0.27.0",
-    "uvicorn>=0.32.1",
-    "requests>=2.32.0",
-    
-    # Environment and configuration
-    "python-dotenv>=1.0.0",
-    "pyyaml>=6.0.2",
-    
-    # ServiceNow integration
-    "pysnc>=1.1.8",
-    
-    # Utilities
-    "pathlib2>=2.3.7",
+description = "ServiceNow MCP System - Complete observability-enabled integration with SSE-based agents"
+requires-python = ">=3.10, <3.13"
+authors = [
+    {name = "ServiceNow MCP Team", email = "team@example.com"},
 ]
+readme = "README.md"
+license = {text = "MIT"}
+keywords = ["servicenow", "mcp", "magentic-ui", "observability", "opentelemetry"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    # ── Core MCP and UI ──────────────────────────────────────────────────
+    "fastmcp>=2.11.0",                               # FastMCP framework
+    "magentic-ui>=0.1.2",                           # AI agent UI
+    "mcp[cli]>=1.12.3",                             # MCP CLI tools
+    
+    # ── HTTP and async ───────────────────────────────────────────────────
+    "httpx>=0.27.0",                                # Modern HTTP client
+    "uvicorn>=0.32.1",                              # ASGI server
+    "requests>=2.32.0",                             # HTTP requests
+    
+    # ── Environment and configuration ────────────────────────────────────
+    "python-dotenv>=1.0.0",                        # Environment variables
+    "pyyaml>=6.0.2",                               # YAML configuration
+    
+    # ── ServiceNow integration ───────────────────────────────────────────
+    "pysnc>=1.1.8",                                # ServiceNow client
+    
+    # ── Structured logging ───────────────────────────────────────────────
+    "structlog>=24,<25",                            # Structured logging
+    
+    # ── OpenTelemetry core ───────────────────────────────────────────────
+    "opentelemetry-api>=1.29",                     # OTel API
+    "opentelemetry-sdk>=1.29",                     # OTel SDK
+    "opentelemetry-exporter-otlp-proto-grpc>=1.29", # OTLP gRPC exporter
+    
+    # ── Auto-instrumentation layers ──────────────────────────────────────
+    "opentelemetry-instrumentation-logging>=0.57b0",     # Log correlation
+    "opentelemetry-instrumentation-fastapi>=0.57b0",     # FastAPI tracing
+    "opentelemetry-instrumentation-httpx>=0.57b0",       # HTTP client tracing
+    "opentelemetry-instrumentation-requests>=0.57b0",    # Requests tracing
+    "opentelemetry-instrumentation-threading>=0.57b0",   # Thread context
+    "opentelemetry-instrumentation-system-metrics>=0.1.0", # System metrics
+    
+    # ── Metrics & profiling ──────────────────────────────────────────────
+    "prometheus-client>=0.20.0",                   # Prometheus metrics
+    "pyroscope-io>=0.8.7",                        # Continuous profiling
+    
+    # ── Testing ──────────────────────────────────────────────────────────
+    "pytest>=8.4.1",                              # Testing framework
+]
+
+[project.scripts]
+servicenow-mcp = "start_system:main"
 
 [project.optional-dependencies]
 test = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
     "pytest-mock>=3.10.0",
+    "pytest-structlog",                        # test helpers for structured logs
     "pyyaml>=6.0.0",
+]
+dev = [
+    "ruff>=0.1.0",                            # Linting and formatting
+    "mypy>=1.0.0",                            # Type checking
+    "pre-commit>=3.0.0",                      # Git hooks
+    "pytest-structlog",                       # test helpers
 ]
 
 [build-system]

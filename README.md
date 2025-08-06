@@ -1,227 +1,319 @@
-# ServiceNow MCP Agent System
+# 🚀 ServiceNow MCP System
 
-A comprehensive integration system that connects ServiceNow REST APIs with Magentic-UI through the Model Context Protocol (MCP), enabling AI agents to interact directly with ServiceNow instances.
+A comprehensive, production-ready ServiceNow integration system using the Model Context Protocol (MCP) with full observability, automated agent discovery, and a unified management interface.
 
-## 🚀 Features
+## ✨ Features
 
-- **ServiceNow Table API Agent**: Full CRUD operations on any ServiceNow table (incidents, users, changes, etc.)
-- **ServiceNow Knowledge Management Agent**: Search and manage knowledge articles using the Knowledge Management REST API
-- **HTTP Transport**: Reliable MCP server communication using HTTP protocol
-- **Daemon Management**: Production-ready start/stop/status scripts with PID management
-- **Auto-discovery**: Automatically generates OpenAPI specifications from ServiceNow APIs
-- **Magentic-UI Integration**: Seamless integration with Magentic-UI's agent ecosystem
+### 🎯 **Core Functionality**
+- **🤖 Auto-Discovery MCP Agents**: Automatically discovers and starts all MCP agents in the `mcp_agents/` folder
+- **🎭 Magentic-UI Integration**: Beautiful web interface for interacting with AI agents
+- **📊 Full Observability**: OpenTelemetry-based monitoring with structured logging, metrics, and distributed tracing
+- **🔄 SSE-Based Communication**: Server-Sent Events for real-time, efficient communication
+- **⚡ One-Command Startup**: Single script starts the entire system
 
-## 📋 Prerequisites
+### 🏗️ **Architecture**
+- **ServiceNow Table API Agent**: Full CRUD operations on ServiceNow tables
+- **ServiceNow Knowledge Management Agent**: Search and manage knowledge articles
+- **Extensible Agent Framework**: Easy to add new MCP agents
+- **Production-Ready Observability**: LGTM stack (Loki, Grafana, Tempo, Mimir) + Pyroscope
 
-- Python 3.11+
-- Docker (for Magentic-UI)
-- ServiceNow instance with REST API access
-- UV package manager (recommended) or pip
+### 🛡️ **Production Features**
+- **Comprehensive Error Handling**: Graceful degradation and recovery
+- **Health Monitoring**: Automatic health checks for all components
+- **Structured Logging**: JSON logs with trace correlation
+- **Signal Handling**: Proper cleanup on shutdown
+- **Environment Management**: Secure credential handling
 
-## 🛠️ Installation
+## 🚀 Quick Start
 
-1. **Clone the repository**:
+### Prerequisites
+- Python 3.10-3.12
+- [uv](https://github.com/astral-sh/uv) (recommended) or pip
+- ServiceNow instance with API access
+- OpenAI API key (optional, for AI agents)
+
+### Installation
+
+1. **Clone and Setup**
    ```bash
-   git clone https://github.com/karthik1609/agentic_solutions.git
-   cd agentic_solutions
+   git clone <repository-url>
+   cd servicenow-mcp-system
+   uv sync  # or pip install -e .
    ```
 
-2. **Set up the virtual environment**:
+2. **Configure Environment**
    ```bash
-   uv venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   cp env.template .env
+   # Edit .env with your credentials:
+   # - SERVICENOW_INSTANCE_URL
+   # - SERVICENOW_USERNAME  
+   # - SERVICENOW_PASSWORD
+   # - OPENAI_API_KEY
    ```
 
-3. **Install dependencies**:
+3. **Start the System**
    ```bash
-   uv sync
+   python start_system.py
    ```
 
-4. **Configure ServiceNow credentials**:
-   Create a `.env` file in the project root:
-   ```env
-   SERVICENOW_INSTANCE_URL=https://your-instance.service-now.com
-   SERVICENOW_USERNAME=your_username
-   SERVICENOW_PASSWORD=your_password
-   SERVICENOW_VERIFY_SSL=true  # set to 'false' to disable SSL verification
-   ```
-
-## 🎯 Quick Start
-
-### Start with HTTP Transport (default)
-
-```bash
-# Start all services (MCP servers + Magentic-UI) using HTTP
-uv run python start_servicenow_http_system.py
-```
-
-This will:
-- Start ServiceNow Table API MCP server on port 3001
-- Start ServiceNow Knowledge Management API MCP server on port 3002
-- Launch Magentic-UI on port 8080 with ServiceNow agents configured
-
-### Start with SSE Transport
-
-```bash
-# Start all services using SSE transport
-uv run python start_servicenow_sse_system.py
-```
-
-### Access the System
-
-Open your browser and navigate to: **http://localhost:8080**
-
-### Available Agents
-
-Once running, you'll have access to:
-
-- **servicenow_table_agent**: CRUD operations on ServiceNow tables
-- **servicenow_knowledge_agent**: Knowledge article search and management
-- **Default agents**: web_surfer, coder_agent, file_surfer, user_proxy
-
-### Stop the System
-
-```bash
-# Stop all services
-uv run python stop_servicenow_system.py
-```
-
-### Check System Status
-
-```bash
-# HTTP mode (default after start_servicenow_http_system.py)
-uv run python status_servicenow_system.py
-
-# SSE mode
-uv run python status_servicenow_system.py --transport sse
-```
-
-You can also override specific health-check endpoints:
-
-```bash
-TABLE_HEALTH_URL=http://localhost:3001/mcp/ \
-KNOWLEDGE_HEALTH_URL=http://localhost:3002/mcp/ \
-uv run python status_servicenow_system.py
-```
-
-## 🔧 Configuration
-
-The system uses `servicenow_final_config.yaml` for Magentic-UI configuration. Key components:
-
-- **HTTP MCP Servers**: ServiceNow APIs exposed as MCP tools
-- **Agent Definitions**: ServiceNow-specific agents with custom system messages
-- **OpenAPI Integration**: Automatic tool generation from ServiceNow API specifications
+4. **Access the Interface**
+   - **Magentic-UI**: http://localhost:8080
+   - **ServiceNow Table API**: http://localhost:3001/sse
+   - **ServiceNow Knowledge API**: http://localhost:3002/sse
 
 ## 📁 Project Structure
 
 ```
-agentic_solutions/
-├── servicenow_table_http_server.py      # Table API MCP server
-├── servicenow_knowledge_http_server.py  # Knowledge API MCP server
-├── servicenow_final_config.yaml         # Magentic-UI configuration
-├── start_servicenow_http_system.py      # System startup script
-├── stop_servicenow_system.py            # System shutdown script
-├── status_servicenow_system.py          # System status checker
-├── create_final_servicenow_specs.py     # OpenAPI spec generator
-├── cleanup_junk.py                      # Cleanup utility
-├── openapi_specs/                       # Generated OpenAPI specifications
-├── .servicenow_pids/                   # Process ID files
-└── .env                                # ServiceNow credentials (not in repo)
+servicenow-mcp-system/
+├── start_system.py              # 🚀 Single entrypoint script
+├── observability.py             # 📊 Observability configuration
+├── servicenow_final_config.yaml # 🎭 Magentic-UI configuration
+├── mcp_agents/                  # 🤖 Auto-discovered MCP agents
+│   ├── servicenow_table_sse_server.py
+│   └── servicenow_knowledge_sse_server.py
+├── observability/               # 📈 Observability stack configs
+│   ├── otel-collector.yaml
+│   └── docker-compose.observability.yml
+├── openapi_specs/               # 📋 API specifications
+├── tests/                       # 🧪 Comprehensive test suite
+├── logs/                        # 📝 Application logs
+└── docs/                        # 📖 Documentation
 ```
 
-## 🔌 API Coverage
+## 🎮 Usage
 
-### Table API
-- GET, POST, PUT, PATCH, DELETE operations
-- Query with encoded queries and filters
-- Aggregate operations
-- Batch operations
-- All ServiceNow tables (incident, sys_user, change_request, etc.)
+### Starting the System
 
-### Knowledge Management API  
-- Search articles by query terms
-- Get articles by ID
-- Featured and most viewed articles
-- Recent articles
-- Article creation and updates
-- Full sn_km_api namespace support
+```bash
+# Start everything (recommended)
+python start_system.py
 
-## 🛡️ Security
-- Credentials stored in `.env` file (excluded from Git)
-- SSL verification enabled by default (set `SERVICENOW_VERIFY_SSL=false` for development)
-- Authentication via ServiceNow username/password
-- Local-only MCP server endpoints
+# Start without observability (faster startup)
+python start_system.py --no-observability
 
-## 🔄 Development
+# Start without UI (agents only)
+python start_system.py --no-ui
 
-### Adding New APIs
+# Use custom config
+python start_system.py --config my_config.yaml
+```
 
-1. **Discover APIs**:
-   ```bash
-   uv run python create_final_servicenow_specs.py
+### System Management
+
+```bash
+# Check system status
+python start_system.py --status
+
+# Stop the system
+python start_system.py --stop
+
+# Or use Ctrl+C to stop gracefully
+```
+
+### Adding New MCP Agents
+
+1. **Create your agent script** in `mcp_agents/`:
+   ```python
+   # mcp_agents/my_custom_agent.py
+   from fastmcp import FastMCP
+   
+   mcp = FastMCP("My Custom Agent")
+   
+   @mcp.tool()
+   def my_tool(query: str) -> str:
+       return f"Processed: {query}"
+   
+   if __name__ == "__main__":
+       mcp.run(transport="sse", host="localhost", port=3003)
    ```
 
-2. **Create MCP Server**: Follow the pattern in existing server files
+2. **Update Magentic-UI config** to include your agent:
+   ```yaml
+   # servicenow_final_config.yaml
+   mcp_agent_configs:
+     - name: my_custom_agent
+       mcp_servers:
+         - server_name: My_Custom_Agent
+           server_params:
+             type: SseServerParams
+             url: "http://localhost:3003/sse"
+   ```
 
-3. **Update Configuration**: Add agent configuration to `servicenow_final_config.yaml`
+3. **Restart the system** - your agent will be auto-discovered!
 
-### Testing MCP Endpoints
+## 📊 Observability
 
+The system includes comprehensive observability out of the box:
+
+### 🔍 **Monitoring Stack**
+- **OpenTelemetry**: Distributed tracing and metrics
+- **Prometheus**: Metrics collection and alerting
+- **Grafana**: Visualization dashboards
+- **Loki**: Log aggregation
+- **Tempo**: Distributed tracing storage
+- **Pyroscope**: Continuous profiling
+
+### 📝 **Logging**
+- **Structured JSON logs** with trace correlation
+- **Multiple log levels**: DEBUG, INFO, WARNING, ERROR, CRITICAL
+- **Automatic log rotation**: 50MB main logs, 10MB error logs
+- **Component-specific loggers** for all services
+
+### 🏥 **Health Monitoring**
+- **Automatic health checks** for all components
+- **Endpoint monitoring** with HTTP status checks
+- **Process monitoring** with PID tracking
+- **Resource usage tracking**
+
+### 📈 **Starting Observability Stack**
 ```bash
-# Test HTTP MCP endpoints directly
-uv run python test_http_mcp.py
+# Start the full LGTM + Pyroscope stack
+cd observability/
+docker-compose -f docker-compose.observability.yml up -d
+
+# Access dashboards:
+# - Grafana: http://localhost:3000 (admin/admin)
+# - Prometheus: http://localhost:9090
+# - Pyroscope: http://localhost:4040
 ```
 
-### Cleanup Development Files
+## 🧪 Testing
+
+Comprehensive test suite with multiple test categories:
 
 ```bash
-# Remove temporary files and logs
-uv run python cleanup_junk.py
+# Run all tests
+uv run pytest
+
+# Run specific test categories
+uv run pytest tests/test_comprehensive.py::TestEnvironmentSetup -v
+uv run pytest tests/test_comprehensive.py::TestMCPServers -v
+uv run pytest tests/test_comprehensive.py::TestObservabilityStack -v
+
+# Run with coverage
+uv run pytest --cov=. --cov-report=html
 ```
 
-## 📚 Dependencies
+### Test Categories
+- **Environment Setup**: Configuration and credentials
+- **MCP Servers**: Agent functionality and imports
+- **Observability Stack**: Logging and monitoring
+- **Service Integration**: End-to-end connectivity
+- **Error Scenarios**: Failure handling and recovery
 
-- **FastMCP**: MCP server framework with OpenAPI integration
-- **Magentic-UI**: AI agent interface and orchestration
-- **httpx**: Async HTTP client for ServiceNow API calls
-- **uvicorn**: ASGI server for MCP HTTP transport
-- **python-dotenv**: Environment variable management
-- **pyyaml**: YAML configuration parsing
+## 🔧 Configuration
+
+### Environment Variables
+```bash
+# ServiceNow Configuration
+SERVICENOW_INSTANCE_URL=https://your-instance.service-now.com
+SERVICENOW_USERNAME=your_username
+SERVICENOW_PASSWORD=your_password
+SERVICENOW_VERIFY_SSL=true
+
+# OpenAI Configuration (Optional)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# System Configuration
+MAGENTIC_UI_PORT=8080
+LOG_LEVEL=INFO
+```
+
+### Magentic-UI Configuration
+The `servicenow_final_config.yaml` file configures:
+- **Model clients** (OpenAI GPT-4o by default)
+- **Agent configurations** and system messages
+- **MCP server connections** (SSE endpoints)
+- **Security and authentication settings**
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **Port conflicts**: Ensure ports 3001, 3002, and 8080 are available
-2. **Docker not running**: Start Docker Desktop before launching
-3. **ServiceNow credentials**: Verify `.env` file configuration
-4. **Agent not visible**: Try refreshing browser or starting new session
+**🚨 "Already running asyncio in this thread"**
+- **Cause**: Event loop conflicts (fixed in current version)
+- **Solution**: Use the latest SSE servers in `mcp_agents/`
 
-### Logs
+**🚨 "Connection refused" to MCP servers**
+- **Cause**: Servers not started or port conflicts
+- **Solution**: Check logs in `logs/` folder, verify ports 3001-3002 are free
 
-- MCP server logs: Check terminal output
-- Magentic-UI logs: Available in the web interface
-- Process status: Use `status_servicenow_system.py`
+**🚨 "Incorrect API key provided"**
+- **Cause**: OpenAI API key not set or malformed
+- **Solution**: Check `.env` file and ensure `OPENAI_API_KEY` is valid
 
-## 📄 License
+**🚨 Magentic-UI shows "An error occurred"**
+- **Cause**: MCP agents not responding or configuration mismatch
+- **Solution**: Verify SSE endpoints are running: `curl http://localhost:3001/sse`
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### Log Analysis
+```bash
+# Analyze logs for issues
+python log_analyzer.py
+
+# Check specific component logs
+tail -f logs/servicenow-table-api-sse.log
+tail -f logs/magentic-ui.log
+```
+
+### Health Checks
+```bash
+# Manual health checks
+curl http://localhost:8080        # Magentic-UI
+curl http://localhost:3001/sse    # Table API
+curl http://localhost:3002/sse    # Knowledge API
+
+# System status
+python start_system.py --status
+```
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Make your changes** with proper tests
+4. **Run the test suite**: `uv run pytest`
+5. **Submit a pull request**
 
-## 📞 Support
+### Development Setup
+```bash
+# Install development dependencies
+uv sync --extra dev
 
-For issues and questions:
-- Create an issue on GitHub
-- Check the troubleshooting section
-- Review Magentic-UI and FastMCP documentation
+# Run linting
+ruff check .
+ruff format .
+
+# Run type checking  
+mypy .
+
+# Install pre-commit hooks
+pre-commit install
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **[FastMCP](https://github.com/jlowin/fastmcp)**: Excellent MCP framework
+- **[Magentic-UI](https://github.com/magentic-ai/magentic-ui)**: Beautiful AI agent interface
+- **[OpenTelemetry](https://opentelemetry.io/)**: Comprehensive observability
+- **[ServiceNow](https://www.servicenow.com/)**: Enterprise service management platform
+
+## 🔮 Roadmap
+
+- [ ] **Multi-tenant support** for multiple ServiceNow instances
+- [ ] **Custom dashboard templates** for common ServiceNow workflows  
+- [ ] **Advanced agent orchestration** with workflow management
+- [ ] **Real-time collaboration** features
+- [ ] **Plugin marketplace** for community-contributed agents
+- [ ] **Advanced security features** (RBAC, audit logging)
+- [ ] **Performance optimization** and caching layers
 
 ---
 
-**Built with ❤️ for ServiceNow automation and AI-powered workflows**
+**🚀 Ready to revolutionize your ServiceNow automation? Get started now!**
+
+For questions, issues, or contributions, please visit our [GitHub repository](https://github.com/your-org/servicenow-mcp-system).

@@ -45,8 +45,8 @@ mcp_agent_configs:
     mcp_servers:
       - server_name: ServiceNow_Table_API
         server_params:
-          type: HttpServerParams
-          url: "http://localhost:3001/mcp/"
+          type: SseServerParams
+          url: "http://localhost:3001/sse"
 
   - name: servicenow_knowledge_agent
     description: "ServiceNow Knowledge Management API agent for searching and managing knowledge articles"
@@ -74,5 +74,5 @@ mcp_agent_configs:
     mcp_servers:
       - server_name: ServiceNow_Knowledge_API
         server_params:
-          type: HttpServerParams
-          url: "http://localhost:3002/mcp/"
+          type: SseServerParams
+          url: "http://localhost:3002/sse"
