@@ -1,4 +1,4 @@
-# 🏗️ ServiceNow MCP System Architecture
+#  ServiceNow MCP System Architecture
 
 ## Overview
 
@@ -111,21 +111,21 @@ mcp_agent_configs:
 ### 1. User Request Flow
 ```
 User Input (Magentic-UI) 
-    → Agent Selection
-    → MCP Tool Invocation (SSE)
-    → ServiceNow API Call
-    → Response Processing
-    → UI Display
+     Agent Selection
+     MCP Tool Invocation (SSE)
+     ServiceNow API Call
+     Response Processing
+     UI Display
 ```
 
 ### 2. Observability Flow
 ```
 Application Event
-    → Structured Log (JSON)
-    → OpenTelemetry Trace
-    → Prometheus Metric
-    → Storage (Loki/Tempo/Prometheus)
-    → Grafana Visualization
+     Structured Log (JSON)
+     OpenTelemetry Trace
+     Prometheus Metric
+     Storage (Loki/Tempo/Prometheus)
+     Grafana Visualization
 ```
 
 ## Security Architecture

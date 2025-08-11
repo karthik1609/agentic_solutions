@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🚀 ServiceNow MCP System - Consolidated Starter
+ ServiceNow MCP System - Consolidated Starter
 
 This script starts the complete ServiceNow MCP system:
 - Observability stack (OpenTelemetry, Prometheus, etc.)
@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 try:
     from observability import init_observability, get_logger, shutdown_observability
 except ImportError:
-    print("⚠️  Observability module not found, continuing without observability...")
+    print("  Observability module not found, continuing without observability...")
     def init_observability(*args, **kwargs):
         return logging.getLogger(__name__)
     def get_logger():
@@ -100,11 +100,11 @@ class SystemManager:
         
         if not self.check_docker():
             self.log_error("docker_not_running")
-            print("❌ Docker is not running. Please start Docker and try again.")
+            print(" Docker is not running. Please start Docker and try again.")
             return False
         
         self.log_info("starting_observability_stack")
-        print("🐳 Starting observability stack (LGTM + Pyroscope)...")
+        print(" Starting observability stack (LGTM + Pyroscope)...")
         
         try:
             # Start the observability stack
@@ -118,30 +118,30 @@ class SystemManager:
             
             if result.returncode == 0:
                 self.log_info("observability_stack_started")
-                print("   ✅ Observability stack started")
+                print("    Observability stack started")
                 
                 # Mark that observability was started
                 self._observability_started = True
                 
                 # Wait for services to be ready
-                print("   ⏳ Waiting for services to be ready...")
+                print("    Waiting for services to be ready...")
                 time.sleep(15)
                 return True
             else:
                 self.log_error("observability_stack_failed", 
                              stdout=result.stdout, 
                              stderr=result.stderr)
-                print(f"   ❌ Failed to start observability stack")
+                print(f"    Failed to start observability stack")
                 print(f"   Error: {result.stderr}")
                 return False
                 
         except subprocess.TimeoutExpired:
             self.log_error("observability_stack_timeout")
-            print("   ❌ Timeout starting observability stack")
+            print("    Timeout starting observability stack")
             return False
         except Exception as e:
             self.log_error("observability_stack_error", error=str(e))
-            print(f"   ❌ Error starting observability stack: {e}")
+            print(f"    Error starting observability stack: {e}")
             return False
     
     def stop_observability_stack(self) -> bool:
@@ -153,7 +153,7 @@ class SystemManager:
             return True  # Nothing to stop
         
         self.log_info("stopping_observability_stack")
-        print("🐳 Stopping observability stack...")
+        print(" Stopping observability stack...")
         
         try:
             result = subprocess.run(
@@ -166,7 +166,7 @@ class SystemManager:
             
             if result.returncode == 0:
                 self.log_info("observability_stack_stopped")
-                print("   ✅ Observability stack stopped")
+                print("    Observability stack stopped")
                 return True
             else:
                 self.log_warning("observability_stack_stop_failed",
@@ -203,7 +203,7 @@ class SystemManager:
                 )
                 self.log_info("observability_initialized", system="servicenow-mcp")
             except Exception as e:
-                print(f"⚠️  Failed to initialize observability: {e}")
+                print(f"  Failed to initialize observability: {e}")
                 self.logger = logging.getLogger(__name__)
         else:
             self.logger = logging.getLogger(__name__)
@@ -308,6 +308,37 @@ class SystemManager:
         except Exception as e:
             self.log_error("magentic_ui_start_error", error=str(e))
             return False
+
+    def start_mkdocs(self) -> bool:
+        """Start MkDocs dev server on 127.0.0.1:8090 if mkdocs configuration exists"""
+        mkdocs_file = self.project_root / "mkdocs.yml"
+        if not mkdocs_file.exists():
+            # No docs site configured
+            return False
+
+        log_file = self.project_root / "logs" / "mkdocs.log"
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+
+        try:
+            cmd = ["uv", "run", "mkdocs", "serve", "-a", "127.0.0.1:8090"]
+            process = subprocess.Popen(
+                cmd,
+                stdout=open(log_file, 'w'),
+                stderr=subprocess.STDOUT,
+                cwd=str(self.project_root)
+            )
+            self.processes["mkdocs"] = process
+
+            # Give it a moment to bind
+            time.sleep(3)
+            return process.poll() is None
+        except FileNotFoundError:
+            # mkdocs not installed
+            self.log_warning("mkdocs_not_installed")
+            return False
+        except Exception as e:
+            self.log_error("mkdocs_start_error", error=str(e))
+            return False
     
     def check_system_health(self) -> Dict[str, bool]:
         """Check if all components are running"""
@@ -350,41 +381,41 @@ class SystemManager:
         health = self.check_system_health()
         
         print("\n" + "="*60)
-        print("🚀 SERVICENOW MCP SYSTEM STATUS")
+        print(" SERVICENOW MCP SYSTEM STATUS")
         print("="*60)
         
-        print("\n📊 COMPONENT STATUS:")
+        print("\n COMPONENT STATUS:")
         for component, status in health.items():
-            status_icon = "✅" if status else "❌"
+            status_icon = "" if status else ""
             print(f"   {status_icon} {component.replace('_', ' ').title()}")
         
-        print(f"\n🌐 ACCESS POINTS:")
-        print(f"   • Magentic-UI: http://localhost:8080")
-        print(f"   • Table API (SSE): http://localhost:3001/sse")
-        print(f"   • Knowledge API (SSE): http://localhost:3002/sse")
+        print(f"\n ACCESS POINTS:")
+        print(f"    Magentic-UI: http://localhost:8080")
+        print(f"    Table API (SSE): http://localhost:3001/sse")
+        print(f"    Knowledge API (SSE): http://localhost:3002/sse")
         
-        print(f"\n📁 LOG FILES:")
+        print(f"\n LOG FILES:")
         log_dir = self.project_root / "logs"
         if log_dir.exists():
             for log_file in log_dir.glob("*.log"):
                 size_kb = log_file.stat().st_size // 1024
-                print(f"   • {log_file.name}: {size_kb}KB")
+                print(f"    {log_file.name}: {size_kb}KB")
         
         print("="*60)
     
     def start_system(self, enable_observability: bool = True, enable_ui: bool = True, config_file: str = "servicenow_final_config.yaml"):
         """Start the complete system"""
-        print("🚀 Starting ServiceNow MCP System...")
-        print(f"📁 Project root: {self.project_root}")
+        print("Starting ServiceNow MCP System...")
+        print(f" Project root: {self.project_root}")
         
         # Check Docker first if we need observability or UI
         if (enable_observability or enable_ui) and not self.check_docker():
-            print("❌ Docker is not running. Please start Docker and try again.")
+            print(" Docker is not running. Please start Docker and try again.")
             print("   Docker is required for:")
             if enable_observability:
-                print("   • Observability stack (Grafana, Prometheus, Loki, Tempo, Pyroscope)")
+                print("    Observability stack (Grafana, Prometheus, Loki, Tempo, Pyroscope)")
             if enable_ui:
-                print("   • Magentic-UI")
+                print("    Magentic-UI")
             return False
         
         # Setup logging
@@ -399,49 +430,60 @@ class SystemManager:
         # Start observability stack first
         if enable_observability:
             total_components += 1
-            print(f"\n🐳 Starting observability stack...")
+            print(f"\n Starting observability stack...")
             if self.start_observability_stack():
                 success_count += 1
             else:
-                print("⚠️  Continuing without observability stack...")
+                print("  Continuing without observability stack...")
                 total_components -= 1  # Don't count observability if it failed
         
         # Start MCP agents
         agents = self.discover_mcp_agents()
         total_components += len(agents)
         
-        print(f"\n🤖 Starting {len(agents)} MCP agents...")
+        print(f"\n Starting {len(agents)} MCP agents...")
         for agent_path in agents:
             if self.start_mcp_agent(agent_path):
                 success_count += 1
-                print(f"   ✅ {agent_path.name}")
+                print(f"    {agent_path.name}")
             else:
-                print(f"   ❌ {agent_path.name}")
+                print(f"    {agent_path.name}")
         
         # Start Magentic-UI
         if enable_ui:
             total_components += 1
-            print(f"\n🎭 Starting Magentic-UI...")
+            print(f"\nStarting Magentic-UI...")
             if self.start_magentic_ui(config_file):
                 success_count += 1
-                print(f"   ✅ Magentic-UI")
+                print(f"   OK Magentic-UI")
             else:
-                print(f"   ❌ Magentic-UI")
+                print(f"   ERR Magentic-UI")
+
+        # Start MkDocs documentation site (if configured)
+        total_components += 1
+        print(f"\nStarting MkDocs...")
+        if self.start_mkdocs():
+            success_count += 1
+            print("   OK MkDocs")
+        else:
+            # Do not treat missing mkdocs as a failure; subtract from total
+            total_components -= 1
+            print("   SKIP MkDocs (not configured or not installed)")
         
         # Wait for everything to stabilize
-        print(f"\n⏳ Waiting for system to stabilize...")
+        print(f"\nWaiting for system to stabilize...")
         time.sleep(10)
         
         # Print final status
         self.print_system_status()
         
         if success_count == total_components:
-            print(f"\n🎉 System started successfully! ({success_count}/{total_components} components)")
+            print(f"\n System started successfully! ({success_count}/{total_components} components)")
             self.log_info("system_start_complete", 
                            success_count=success_count, 
                            total_components=total_components)
         else:
-            print(f"\n⚠️  System started with issues ({success_count}/{total_components} components)")
+            print(f"\n  System started with issues ({success_count}/{total_components} components)")
             self.log_warning("system_start_partial", 
                               success_count=success_count, 
                               total_components=total_components)
@@ -450,50 +492,50 @@ class SystemManager:
     
     def stop_system(self):
         """Stop all system components"""
-        print("\n🛑 Stopping ServiceNow MCP System...")
+        print("\n Stopping ServiceNow MCP System...")
         
         stopped_count = 0
         for name, process in self.processes.items():
             try:
                 if process.poll() is None:  # Still running
-                    print(f"   🛑 Stopping {name}...")
+                    print(f"    Stopping {name}...")
                     process.terminate()
                     
                     # Wait for graceful shutdown
                     try:
                         process.wait(timeout=10)
-                        print(f"   ✅ {name} stopped gracefully")
+                        print(f"    {name} stopped gracefully")
                         stopped_count += 1
                     except subprocess.TimeoutExpired:
-                        print(f"   🔨 Force killing {name}...")
+                        print(f"    Force killing {name}...")
                         process.kill()
                         process.wait()
-                        print(f"   ✅ {name} force stopped")
+                        print(f"    {name} force stopped")
                         stopped_count += 1
                 else:
-                    print(f"   ℹ️  {name} already stopped")
+                    print(f"     {name} already stopped")
                     stopped_count += 1
                     
             except Exception as e:
-                print(f"   ❌ Error stopping {name}: {e}")
+                print(f"    Error stopping {name}: {e}")
         
         # Stop observability stack (only if it was started)
         if hasattr(self, '_observability_started') and self._observability_started:
             try:
                 self.stop_observability_stack()
             except Exception as e:
-                print(f"⚠️  Error stopping observability stack: {e}")
+                print(f"  Error stopping observability stack: {e}")
         
         # Cleanup
         if self.logger:
             self.log_info("system_stop_complete", stopped_count=stopped_count)
         
         shutdown_observability()
-        print(f"✅ System stopped ({stopped_count} components)")
+        print(f" System stopped ({stopped_count} components)")
 
 def signal_handler(signum, frame):
     """Handle shutdown signals"""
-    print(f"\n🛑 Received signal {signum}, shutting down...")
+    print(f"\n Received signal {signum}, shutting down...")
     if hasattr(signal_handler, 'manager'):
         signal_handler.manager.stop_system()
     sys.exit(0)
@@ -541,7 +583,7 @@ def main():
             )
             
             if success:
-                print(f"\n🎯 System is running! Press Ctrl+C to stop.")
+                print(f"\n System is running! Press Ctrl+C to stop.")
                 try:
                     # Keep the main process alive
                     while True:
@@ -555,13 +597,13 @@ def main():
                 except KeyboardInterrupt:
                     pass
             else:
-                print(f"\n❌ System failed to start properly")
+                print(f"\n System failed to start properly")
                 sys.exit(1)
                 
     except KeyboardInterrupt:
         pass
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f" Unexpected error: {e}")
         sys.exit(1)
     finally:
         manager.stop_system()

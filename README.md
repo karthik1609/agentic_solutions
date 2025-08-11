@@ -1,30 +1,30 @@
-# 🚀 ServiceNow MCP System
+#  ServiceNow MCP System
 
 A comprehensive, production-ready ServiceNow integration system using the Model Context Protocol (MCP) with full observability, automated agent discovery, and a unified management interface.
 
-## ✨ Features
+##  Features
 
-### 🎯 **Core Functionality**
-- **🤖 Auto-Discovery MCP Agents**: Automatically discovers and starts all MCP agents in the `mcp_agents/` folder
-- **🎭 Magentic-UI Integration**: Beautiful web interface for interacting with AI agents
-- **📊 Full Observability**: OpenTelemetry-based monitoring with structured logging, metrics, and distributed tracing
-- **🔄 SSE-Based Communication**: Server-Sent Events for real-time, efficient communication
-- **⚡ One-Command Startup**: Single script starts the entire system
+###  **Core Functionality**
+- ** Auto-Discovery MCP Agents**: Automatically discovers and starts all MCP agents in the `mcp_agents/` folder
+- ** Magentic-UI Integration**: Beautiful web interface for interacting with AI agents
+- ** Full Observability**: OpenTelemetry-based monitoring with structured logging, metrics, and distributed tracing
+- ** SSE-Based Communication**: Server-Sent Events for real-time, efficient communication
+- ** One-Command Startup**: Single script starts the entire system
 
-### 🏗️ **Architecture**
+###  **Architecture**
 - **ServiceNow Table API Agent**: Full CRUD operations on ServiceNow tables
 - **ServiceNow Knowledge Management Agent**: Search and manage knowledge articles
 - **Extensible Agent Framework**: Easy to add new MCP agents
 - **Production-Ready Observability**: LGTM stack (Loki, Grafana, Tempo, Mimir) + Pyroscope
 
-### 🛡️ **Production Features**
+###  **Production Features**
 - **Comprehensive Error Handling**: Graceful degradation and recovery
 - **Health Monitoring**: Automatic health checks for all components
 - **Structured Logging**: JSON logs with trace correlation
 - **Signal Handling**: Proper cleanup on shutdown
 - **Environment Management**: Secure credential handling
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Python 3.10-3.12
@@ -61,26 +61,26 @@ A comprehensive, production-ready ServiceNow integration system using the Model 
    - **ServiceNow Table API**: http://localhost:3001/sse
    - **ServiceNow Knowledge API**: http://localhost:3002/sse
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 servicenow-mcp-system/
-├── start_system.py              # 🚀 Single entrypoint script
-├── observability.py             # 📊 Observability configuration
-├── servicenow_final_config.yaml # 🎭 Magentic-UI configuration
-├── mcp_agents/                  # 🤖 Auto-discovered MCP agents
-│   ├── servicenow_table_sse_server.py
-│   └── servicenow_knowledge_sse_server.py
-├── observability/               # 📈 Observability stack configs
-│   ├── otel-collector.yaml
-│   └── docker-compose.observability.yml
-├── openapi_specs/               # 📋 API specifications
-├── tests/                       # 🧪 Comprehensive test suite
-├── logs/                        # 📝 Application logs
-└── docs/                        # 📖 Documentation
+ start_system.py              #  Single entrypoint script
+ observability.py             #  Observability configuration
+ servicenow_final_config.yaml #  Magentic-UI configuration
+ mcp_agents/                  #  Auto-discovered MCP agents
+    servicenow_table_sse_server.py
+    servicenow_knowledge_sse_server.py
+ observability/               #  Observability stack configs
+    otel-collector.yaml
+    docker-compose.observability.yml
+ openapi_specs/               #  API specifications
+ tests/                       #  Comprehensive test suite
+ logs/                        #  Application logs
+ docs/                        #  Documentation
 ```
 
-## 🎮 Usage
+##  Usage
 
 ### Starting the System
 
@@ -141,11 +141,11 @@ python start_system.py --stop
 
 3. **Restart the system** - your agent will be auto-discovered!
 
-## 📊 Observability
+##  Observability
 
 The system includes comprehensive observability out of the box:
 
-### 🔍 **Monitoring Stack**
+###  **Monitoring Stack**
 - **OpenTelemetry**: Distributed tracing and metrics
 - **Prometheus**: Metrics collection and alerting
 - **Grafana**: Visualization dashboards
@@ -153,19 +153,19 @@ The system includes comprehensive observability out of the box:
 - **Tempo**: Distributed tracing storage
 - **Pyroscope**: Continuous profiling
 
-### 📝 **Logging**
+###  **Logging**
 - **Structured JSON logs** with trace correlation
 - **Multiple log levels**: DEBUG, INFO, WARNING, ERROR, CRITICAL
 - **Automatic log rotation**: 50MB main logs, 10MB error logs
 - **Component-specific loggers** for all services
 
-### 🏥 **Health Monitoring**
+###  **Health Monitoring**
 - **Automatic health checks** for all components
 - **Endpoint monitoring** with HTTP status checks
 - **Process monitoring** with PID tracking
 - **Resource usage tracking**
 
-### 📈 **Starting Observability Stack**
+###  **Starting Observability Stack**
 ```bash
 # Start the full LGTM + Pyroscope stack
 cd observability/
@@ -177,7 +177,7 @@ docker-compose -f docker-compose.observability.yml up -d
 # - Pyroscope: http://localhost:4040
 ```
 
-## 🧪 Testing
+##  Testing
 
 Comprehensive test suite with multiple test categories:
 
@@ -201,7 +201,7 @@ uv run pytest --cov=. --cov-report=html
 - **Service Integration**: End-to-end connectivity
 - **Error Scenarios**: Failure handling and recovery
 
-## 🔧 Configuration
+##  Configuration
 
 ### Environment Variables
 ```bash
@@ -226,23 +226,23 @@ The `servicenow_final_config.yaml` file configures:
 - **MCP server connections** (SSE endpoints)
 - **Security and authentication settings**
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
-**🚨 "Already running asyncio in this thread"**
+** "Already running asyncio in this thread"**
 - **Cause**: Event loop conflicts (fixed in current version)
 - **Solution**: Use the latest SSE servers in `mcp_agents/`
 
-**🚨 "Connection refused" to MCP servers**
+** "Connection refused" to MCP servers**
 - **Cause**: Servers not started or port conflicts
 - **Solution**: Check logs in `logs/` folder, verify ports 3001-3002 are free
 
-**🚨 "Incorrect API key provided"**
+** "Incorrect API key provided"**
 - **Cause**: OpenAI API key not set or malformed
 - **Solution**: Check `.env` file and ensure `OPENAI_API_KEY` is valid
 
-**🚨 Magentic-UI shows "An error occurred"**
+** Magentic-UI shows "An error occurred"**
 - **Cause**: MCP agents not responding or configuration mismatch
 - **Solution**: Verify SSE endpoints are running: `curl http://localhost:3001/sse`
 
@@ -267,7 +267,7 @@ curl http://localhost:3002/sse    # Knowledge API
 python start_system.py --status
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 1. **Fork the repository**
 2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
@@ -291,18 +291,18 @@ mypy .
 pre-commit install
 ```
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **[FastMCP](https://github.com/jlowin/fastmcp)**: Excellent MCP framework
 - **[Magentic-UI](https://github.com/magentic-ai/magentic-ui)**: Beautiful AI agent interface
 - **[OpenTelemetry](https://opentelemetry.io/)**: Comprehensive observability
 - **[ServiceNow](https://www.servicenow.com/)**: Enterprise service management platform
 
-## 🔮 Roadmap
+##  Roadmap
 
 - [ ] **Multi-tenant support** for multiple ServiceNow instances
 - [ ] **Custom dashboard templates** for common ServiceNow workflows  
@@ -314,6 +314,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**🚀 Ready to revolutionize your ServiceNow automation? Get started now!**
+** Ready to revolutionize your ServiceNow automation? Get started now!**
 
 For questions, issues, or contributions, please visit our [GitHub repository](https://github.com/your-org/servicenow-mcp-system).

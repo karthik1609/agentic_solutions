@@ -1,8 +1,8 @@
-# 🚀 Deployment Guide
+#  Deployment Guide
 
 This guide covers different deployment scenarios for the ServiceNow MCP System, from local development to production environments.
 
-## 📋 Prerequisites
+##  Prerequisites
 
 ### System Requirements
 - **Python**: 3.10-3.12
@@ -15,7 +15,7 @@ This guide covers different deployment scenarios for the ServiceNow MCP System, 
 - **OpenAI API Key**: For AI agent functionality (optional)
 - **Docker**: For observability stack (optional)
 
-## 🏠 Local Development
+##  Local Development
 
 ### Quick Start
 ```bash
@@ -47,7 +47,7 @@ python start_system.py --no-ui
 python start_system.py --config dev_config.yaml
 ```
 
-## 🐳 Docker Deployment
+##  Docker Deployment
 
 ### Option 1: Docker Compose (Recommended)
 ```bash
@@ -132,7 +132,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 CMD ["uv", "run", "python", "start_system.py"]
 ```
 
-## ☸️ Kubernetes Deployment
+##  Kubernetes Deployment
 
 ### Namespace and ConfigMap
 ```yaml
@@ -294,7 +294,7 @@ kubectl logs -f deployment/servicenow-mcp -n servicenow-mcp
 kubectl port-forward svc/servicenow-mcp-service 8080:8080 -n servicenow-mcp
 ```
 
-## 🌩️ Cloud Deployments
+##  Cloud Deployments
 
 ### AWS ECS
 ```json
@@ -396,7 +396,7 @@ az container create \
   --restart-policy Always
 ```
 
-## 🔧 Production Configuration
+##  Production Configuration
 
 ### Environment Variables
 ```bash
@@ -457,7 +457,7 @@ server {
 }
 ```
 
-## 📊 Monitoring Setup
+##  Monitoring Setup
 
 ### Prometheus Configuration
 ```yaml
@@ -510,7 +510,7 @@ scrape_configs:
 }
 ```
 
-## 🚨 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 

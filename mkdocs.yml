@@ -1,13 +1,11 @@
-site_name: Agentic Solutions Documentation
+site_name: ServiceNow MCP System Documentation
 nav:
   - Home: index.md
-  - Guides:
-    - ServiceNow API and MCP SSE: api_mcp_usage.md
   - Architecture: ARCHITECTURE.md
   - Deployment: DEPLOYMENT.md
-  - Observability: OBSERVABILITY_GUIDE.md
+  - Observability Guide: OBSERVABILITY_GUIDE.md
+  - API and MCP Usage: api_mcp_usage.md
 extra_javascript:
-  - https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js
   - docs/_assets/mermaid-init.js
 theme:
-  name: mkdocs
+  name: readthedocs

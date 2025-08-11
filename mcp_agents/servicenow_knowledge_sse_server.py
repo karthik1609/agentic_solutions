@@ -93,10 +93,10 @@ def main():
                    port=3002,
                    instance=SN_INSTANCE)
         
-        print("🚀 Starting ServiceNow Knowledge API MCP Server (SSE)")
-        print(f"📡 Port: 3002")
-        print(f"🔗 ServiceNow Instance: {SN_INSTANCE}")
-        print("✅ Ready for SSE requests")
+        print(" Starting ServiceNow Knowledge API MCP Server (SSE)")
+        print(f" Port: 3002")
+        print(f" ServiceNow Instance: {SN_INSTANCE}")
+        print(" Ready for SSE requests")
         
         # Let FastMCP handle the event loop
         logger.info("mcp_server_running", host="localhost", port=3002)
