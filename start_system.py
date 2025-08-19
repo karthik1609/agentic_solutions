@@ -459,16 +459,16 @@ class SystemManager:
             else:
                 print(f"   ERR Magentic-UI")
 
-        # Start MkDocs documentation site (if configured)
-        total_components += 1
-        print(f"\nStarting MkDocs...")
-        if self.start_mkdocs():
-            success_count += 1
-            print("   OK MkDocs")
-        else:
-            # Do not treat missing mkdocs as a failure; subtract from total
-            total_components -= 1
-            print("   SKIP MkDocs (not configured or not installed)")
+        # # Start MkDocs documentation site (if configured)
+        # total_components += 1
+        # print(f"\nStarting MkDocs...")
+        # if self.start_mkdocs():
+        #     success_count += 1
+        #     print("   OK MkDocs")
+        # else:
+        #     # Do not treat missing mkdocs as a failure; subtract from total
+        #     total_components -= 1
+        #     print("   SKIP MkDocs (not configured or not installed)")
         
         # Wait for everything to stabilize
         print(f"\nWaiting for system to stabilize...")

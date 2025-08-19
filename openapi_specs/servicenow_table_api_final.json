@@ -11,7 +11,7 @@
       "description": "ServiceNow Instance",
       "variables": {
         "server_url": {
-          "default": "https://your-instance.service-now.com",
+          "default": "https://dev218136.service-now.com",
           "description": "ServiceNow instance URL"
         }
       }
