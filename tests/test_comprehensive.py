@@ -254,7 +254,7 @@ class TestServiceIntegration:
         endpoints = [
             ("http://localhost:3001/sse", "Table SSE Server"),
             ("http://localhost:3002/sse", "Knowledge SSE Server"),
-            ("http://localhost:8080", "Magentic-UI")
+            ("http://localhost:8081", "Magentic-UI")
         ]
         
         for url, service_name in endpoints:
@@ -298,7 +298,7 @@ class TestErrorScenarios:
         """Test behavior when ports are already in use"""
         # This is more of a documentation test - the actual port conflict
         # handling would need to be implemented in the servers
-        ports = [3001, 3002, 8080]
+        ports = [3001, 3002, 8081]
         
         for port in ports:
             try:

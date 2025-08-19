@@ -32,7 +32,7 @@ cp env.template .env
 python start_system.py
 
 # 4. Access the interface
-open http://localhost:8080
+open http://localhost:8081
 ```
 
 ### Development Configuration

@@ -279,7 +279,7 @@ class SystemManager:
         
         try:
             # Start Magentic-UI in detached mode
-            cmd = ["uv", "run", "magentic-ui", "--port", "8080", "--config", str(config_path)]
+            cmd = ["uv", "run", "magentic-ui", "--port", "8081", "--config", str(config_path)]
             
             # Use nohup equivalent for cross-platform compatibility
             process = subprocess.Popen(
@@ -358,7 +358,7 @@ class SystemManager:
         import requests
         try:
             # Check Magentic-UI
-            response = requests.get("http://localhost:8080", timeout=5)
+            response = requests.get("http://localhost:8081", timeout=5)
             health["magentic_ui_endpoint"] = response.status_code == 200
         except:
             health["magentic_ui_endpoint"] = False
@@ -390,7 +390,7 @@ class SystemManager:
             print(f"   {status_icon} {component.replace('_', ' ').title()}")
         
         print(f"\n ACCESS POINTS:")
-        print(f"    Magentic-UI: http://localhost:8080")
+        print(f"    Magentic-UI: http://localhost:8081")
         print(f"    Table API (SSE): http://localhost:3001/sse")
         print(f"    Knowledge API (SSE): http://localhost:3002/sse")
         

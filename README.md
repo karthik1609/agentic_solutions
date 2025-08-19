@@ -57,7 +57,7 @@ A comprehensive, production-ready ServiceNow integration system using the Model 
    ```
 
 4. **Access the Interface**
-   - **Magentic-UI**: http://localhost:8080
+   - **Magentic-UI**: http://localhost:8081
    - **ServiceNow Table API**: http://localhost:3001/sse
    - **ServiceNow Knowledge API**: http://localhost:3002/sse
 
@@ -215,7 +215,7 @@ SERVICENOW_VERIFY_SSL=true
 OPENAI_API_KEY=your_openai_api_key_here
 
 # System Configuration
-MAGENTIC_UI_PORT=8080
+MAGENTIC_UI_PORT=8081
 LOG_LEVEL=INFO
 ```
 
@@ -259,7 +259,7 @@ tail -f logs/magentic-ui.log
 ### Health Checks
 ```bash
 # Manual health checks
-curl http://localhost:8080        # Magentic-UI
+curl http://localhost:8081        # Magentic-UI
 curl http://localhost:3001/sse    # Table API
 curl http://localhost:3002/sse    # Knowledge API
 

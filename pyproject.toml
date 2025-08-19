@@ -54,8 +54,8 @@ dependencies = [
     "langchain-community>=0.3.27",
     "langchain-openai>=0.3.30",
     "pypdf>=6.0.0",
-    "magentic-ui",
     "mkdocs>=1.6.1",
+    "magentic-ui",
 ]
 
 [project.scripts]

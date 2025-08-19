@@ -8,7 +8,7 @@ The ServiceNow MCP System is designed as a modular, scalable, and observable int
 
 ```mermaid
 graph TB
-    UI[Magentic-UI :8080] --> MCP1[Table API Agent :3001]
+    UI[Magentic-UI :8081] --> MCP1[Table API Agent :3001]
     UI --> MCP2[Knowledge API Agent :3002]
     UI --> MCP3[Custom Agent :300X]
     
@@ -52,7 +52,7 @@ graph TB
   - `servicenow_knowledge_sse_server.py`: Knowledge Management
 
 ### 3. Magentic-UI Interface
-- **Port**: 8080
+- **Port**: 8081
 - **Configuration**: `servicenow_final_config.yaml`
 - **Features**:
   - Multi-agent orchestration
