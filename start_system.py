@@ -592,8 +592,8 @@ def main():
                         health = manager.check_system_health()
                         failed_components = [k for k, v in health.items() if not v]
                         if failed_components:
-                            manager.logger.warning("health_check_failed_components", 
-                                                 failed=failed_components)
+                            manager.log_warning("health_check_failed_components", 
+                                                failed=failed_components)
                 except KeyboardInterrupt:
                     pass
             else:
