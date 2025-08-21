@@ -90,4 +90,4 @@ include = [
 ]
 
 [tool.uv.sources]
-magentic-ui = { git = "https://github.com/karthik1609/magentic-ui.git", rev = "6e09881" }
+magentic-ui = { git = "https://github.com/karthik1609/magentic-ui.git", rev = "59f0ce4" }

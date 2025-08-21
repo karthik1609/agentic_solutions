@@ -8,7 +8,8 @@ Use these commands to swap the Magentic-UI dependency between your fork and the 
 ### Switch to your forked Magentic-UI
 ```bash
 uv remove magentic-ui
-uv add "magentic-ui @ git+https://github.com/karthik1609/magentic-ui.git" --rev 6e09881
+uv add "magentic-ui @ git+https://github.com/karthik1609/magentic-ui.git" --rev 59f0ce4 
+# uv add "magentic-ui @ git+https://github.com/karthik1609/magentic-ui.git" --rev 5e53323
 uv lock
 uv sync
 ```

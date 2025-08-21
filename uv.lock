@@ -1639,7 +1639,7 @@ wheels = [
 [[package]]
 name = "magentic-ui"
 version = "0.1.2"
-source = { git = "https://github.com/karthik1609/magentic-ui.git?rev=6e09881#6e098815e869aacf3b120fcacabe230be6cc3b98" }
+source = { git = "https://github.com/karthik1609/magentic-ui.git?rev=59f0ce4#59f0ce46003b87d4b4cad327d0d32f733e253b81" }
 dependencies = [
     { name = "aioconsole" },
     { name = "aiofiles" },
@@ -3868,7 +3868,7 @@ requires-dist = [
     { name = "langchain-chroma", specifier = ">=0.2.5" },
     { name = "langchain-community", specifier = ">=0.3.27" },
     { name = "langchain-openai", specifier = ">=0.3.30" },
-    { name = "magentic-ui", git = "https://github.com/karthik1609/magentic-ui.git?rev=6e09881" },
+    { name = "magentic-ui", git = "https://github.com/karthik1609/magentic-ui.git?rev=59f0ce4" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.12.3" },
     { name = "mkdocs", specifier = ">=1.6.1" },
     { name = "mkdocs", marker = "extra == 'dev'", specifier = ">=1.6.0" },

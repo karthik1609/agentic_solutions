@@ -279,7 +279,7 @@ class SystemManager:
         
         try:
             # Start Magentic-UI in detached mode
-            cmd = ["uv", "run", "magentic-ui", "--port", "8081", "--config", str(config_path)]
+            cmd = ["uv", "run", "magentic-ui", "--run-without-docker", "--port", "8081", "--config", str(config_path)]
             
             # Use nohup equivalent for cross-platform compatibility
             process = subprocess.Popen(
